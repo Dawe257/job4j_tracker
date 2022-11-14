@@ -65,7 +65,7 @@ public class MemTrackerTest {
         memTracker.add(item1);
         memTracker.add(item2);
         memTracker.add(item3);
-        Item result = memTracker.findById("1");
+        Item result = memTracker.findById(4);
         assertThat(result).isNull();
     }
 
