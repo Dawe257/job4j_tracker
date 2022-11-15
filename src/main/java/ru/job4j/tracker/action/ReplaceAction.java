@@ -8,7 +8,7 @@ import ru.job4j.tracker.store.Store;
 
 public class ReplaceAction implements UserAction {
 
-    Output output;
+    private final Output output;
 
     public ReplaceAction(Output output) {
         this.output = output;

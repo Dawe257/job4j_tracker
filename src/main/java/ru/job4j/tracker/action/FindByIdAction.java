@@ -8,7 +8,7 @@ import ru.job4j.tracker.store.Store;
 
 public class FindByIdAction implements UserAction {
 
-    Output output;
+    private final Output output;
 
     public FindByIdAction(Output output) {
         this.output = output;

@@ -6,7 +6,8 @@ import ru.job4j.tracker.input.Input;
 import ru.job4j.tracker.store.Store;
 
 public class DeleteAction implements UserAction {
-    Output output;
+
+    private final Output output;
 
     public DeleteAction(Output output) {
         this.output = output;

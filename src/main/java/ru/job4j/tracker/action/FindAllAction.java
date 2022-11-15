@@ -9,7 +9,7 @@ import ru.job4j.tracker.store.Store;
 import java.util.List;
 
 public class FindAllAction implements UserAction {
-    Output output;
+    private final Output output;
 
     public FindAllAction(Output output) {
         this.output = output;
