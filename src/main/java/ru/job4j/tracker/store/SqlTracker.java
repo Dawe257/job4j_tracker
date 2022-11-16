@@ -6,15 +6,14 @@ import ru.job4j.tracker.model.Item;
 
 import java.io.InputStream;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 public class SqlTracker implements Store, AutoCloseable {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlTracker.class.getName());
     private Connection cn;
-    private final Logger logger = LoggerFactory.getLogger(SqlTracker.class.getName());
 
     public void init() {
         try (InputStream in = SqlTracker.class.getClassLoader().getResourceAsStream("app.properties")) {
@@ -53,7 +52,7 @@ public class SqlTracker implements Store, AutoCloseable {
                 }
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return item;
     }
@@ -68,7 +67,7 @@ public class SqlTracker implements Store, AutoCloseable {
             statement.setInt(3, id);
             result = statement.executeUpdate() == 1;
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
@@ -81,7 +80,7 @@ public class SqlTracker implements Store, AutoCloseable {
             statement.setInt(1, id);
             result = statement.executeUpdate() == 1;
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
@@ -91,14 +90,13 @@ public class SqlTracker implements Store, AutoCloseable {
         String sql = "select * from item";
         List<Item> result = new ArrayList<>();
         try (Statement statement = cn.createStatement()) {
-            statement.execute(sql);
-            try (ResultSet resultSet = statement.getResultSet()) {
+            try (ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     result.add(getItemFromResultSet(resultSet));
                 }
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
@@ -109,14 +107,13 @@ public class SqlTracker implements Store, AutoCloseable {
         List<Item> result = new ArrayList<>();
         try (PreparedStatement statement = cn.prepareStatement(sql)) {
             statement.setString(1, key);
-            statement.execute();
-            try (ResultSet resultSet = statement.getResultSet()) {
+            try (ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     result.add(getItemFromResultSet(resultSet));
                 }
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
@@ -127,14 +124,13 @@ public class SqlTracker implements Store, AutoCloseable {
         Item item = null;
         try (PreparedStatement statement = cn.prepareStatement(sql)) {
             statement.setInt(1, id);
-            statement.execute();
-            try (ResultSet resultSet = statement.getResultSet()) {
+            try (ResultSet resultSet = statement.executeQuery(sql)) {
                 if (resultSet.next()) {
                     item = getItemFromResultSet(resultSet);
                 }
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return item;
     }
