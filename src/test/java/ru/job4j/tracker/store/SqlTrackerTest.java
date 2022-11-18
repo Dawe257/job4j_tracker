@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
+import static org.assertj.core.api.Assertions.*;
+
 public class SqlTrackerTest {
 
     private static Connection connection;
@@ -47,26 +49,24 @@ public class SqlTrackerTest {
     @Test
     public void whenSaveItemAndFindByGeneratedIdThenMustBeTheSame() {
         SqlTracker tracker = new SqlTracker(connection);
-        Item item = new Item("item");
-        tracker.add(item);
-        Assertions.assertEquals(item, tracker.findById(item.getId()));
+        Item item = tracker.add(new Item("item"));
+        assertThat(tracker.findById(item.getId())).isEqualTo(item);
     }
 
     @Test
     public void whenSaveItemAndReplace() {
         SqlTracker tracker = new SqlTracker(connection);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         Item newItem = new Item("new item");
-        Assertions.assertTrue(tracker.replace(item.getId(), newItem));
+        assertThat(tracker.replace(item.getId(), newItem)).isTrue();
     }
 
     @Test
     public void whenSaveItemAndDelete() {
         SqlTracker tracker = new SqlTracker(connection);
-        Item item = new Item("item");
-        tracker.add(item);
-        Assertions.assertTrue(tracker.delete(item.getId()));
+        Item item = tracker.add(new Item("item"));
+        assertThat(tracker.delete(item.getId())).isTrue();
+        assertThat(tracker.findById(item.getId())).isNull();
     }
 
     @Test
@@ -75,21 +75,18 @@ public class SqlTrackerTest {
         List<Item> expected = List.of(
                 new Item("item1"),
                 new Item("item2"),
-                new Item("item1")
+                new Item("item3")
         );
         expected.forEach(tracker::add);
-        List<Item> actual = tracker.findAll();
-        Assertions.assertEquals(actual.size(), 3);
-        Assertions.assertEquals(expected, actual);
+        assertThat(tracker.findAll()).containsAll(expected);
     }
 
     @Test
     public void whenSaveItemAndFindByName() {
         SqlTracker tracker = new SqlTracker(connection);
-        Item item = new Item("item");
-        tracker.add(item);
+        Item item = tracker.add(new Item("item"));
         List<Item> actual = tracker.findByName("item");
-        Assertions.assertEquals(actual.size(), 1);
-        Assertions.assertEquals(item, actual.get(0));
+        assertThat(actual.size()).isEqualTo(1);
+        assertThat(item).isEqualTo(actual.get(0));
     }
 }
